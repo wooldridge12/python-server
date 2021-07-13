@@ -1,6 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from locations.request import get_all_locations
-from employees import get_all_employees
+from locations.request import get_all_locations, get_single_location
+from employees import get_all_employees, get_single_employee
 from animals import get_all_animals, get_single_animal
 
 
@@ -67,11 +67,17 @@ class HandleRequests(BaseHTTPRequestHandler):
             else:
                 response = get_all_animals()
 
-        elif self.path == "/employees":
-            response = get_all_employees()
+        elif resource == "employees":
+            if id is not None:
+                response = f"{get_single_employee(id)}"
+            else:
+                response = get_all_employees()
 
-        elif self.path == "/locations":
-            response = get_all_locations()
+        elif resource == "locations":
+            if id is not None:
+                response = f"{get_single_location(id)}"
+            else:
+                response = get_all_locations()
 
         # It's an if..else statement
         # if self.path == "/animals":
