@@ -1,10 +1,9 @@
 import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from locations.request import get_all_locations, get_single_location
-from employees import get_all_employees, get_single_employee
-from animals import get_all_animals, get_single_animal, create_animal, delete_animal
-from customers import get_all_customers,get_single_customer,create_customer
-
+from locations.request import get_all_locations, get_single_location, delete_location, update_location
+from employees import get_all_employees, get_single_employee, delete_employee, update_employee
+from animals import get_all_animals, get_single_animal, create_animal, delete_animal, update_animal
+from customers import get_all_customers,get_single_customer,create_customer, delete_customer, update_customer
 
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
@@ -12,7 +11,8 @@ from customers import get_all_customers,get_single_customer,create_customer
 # common purpose is to respond to HTTP requests from a client.
 class HandleRequests(BaseHTTPRequestHandler):
     '''note that is needed'''
-    def parse_url(self, path): #pylint: disable=no-self-use
+    def parse_url(self, path):
+        '''Parse_url function'''
         # Just like splitting a string in JavaScript. If the
         # path is "/animals/1", the resulting list will
         # have "" at index 0, "animals" at index 1, and "1"
@@ -91,8 +91,8 @@ class HandleRequests(BaseHTTPRequestHandler):
 
     # Here's a method on the class that overrides the parent's method.
     # It handles any POST request.
-   
     def do_POST(self):
+        '''Post method'''
         self._set_headers(201)
         content_len = int(self.headers.get('content-length', 0))
         post_body = self.rfile.read(content_len)
@@ -120,6 +120,7 @@ class HandleRequests(BaseHTTPRequestHandler):
         self.wfile.write(f"{new_animal, new_customer}".encode())
 
     def do_DELETE(self):
+        '''Delete method'''
     # Set a 204 response code
         self._set_headers(204)
 
@@ -130,6 +131,15 @@ class HandleRequests(BaseHTTPRequestHandler):
         if resource == "animals":
             delete_animal(id)
 
+        elif resource == "customers":
+            delete_customer(id)
+
+        elif resource == "employees":
+            delete_employee(id)
+
+        elif resource == "locations":
+            delete_location(id)
+
         # Encode the new animal and send in response
         self.wfile.write("".encode())
 
@@ -139,8 +149,30 @@ class HandleRequests(BaseHTTPRequestHandler):
 
     def do_PUT(self):
         '''PUT'''
+        self._set_headers(204)
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        post_body = json.loads(post_body)
 
-        self.do_POST()
+        # parse the URL
+        (resource, id) = self.parse_url(self.path)
+
+        # Delete a single animal from the list
+        if resource == "animals":
+            update_animal(id, post_body)
+
+        elif resource == "customers":
+            update_customer(id, post_body)
+
+        elif resource == "employees":
+            update_employee(id, post_body)
+
+        elif resource == "locations":
+            update_location(id, post_body)
+
+        # Encode the new animal and send in response
+        self.wfile.write("".encode())
+        # self.do_POST()
 
 
 # This function is not inside the class. It is the starting
