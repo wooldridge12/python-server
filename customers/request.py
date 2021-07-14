@@ -44,3 +44,24 @@ def create_customer(customer):
 
     # Return the dictionary with `id` property added
     return customer
+
+
+def delete_customer(id):
+    """Delete customer"""
+    # comments can be found in animals request
+    customer_index = -1
+
+    for index, customer in enumerate(CUSTOMERS):
+        if customer["id"] == id:
+            customer_index = index
+
+    if customer_index >= 0:
+        CUSTOMERS.pop(customer_index)
+
+
+def update_customer(id, new_customer):
+    '''Put method'''
+    for index, customer in enumerate(CUSTOMERS):
+        if customer["id"]  == id:
+            CUSTOMERS[index] = new_customer
+            break
