@@ -30,7 +30,6 @@ def get_all_locations():
     return LOCATIONS
 
 
-
     # Function with a single parameter
 def get_single_location(id):
     # Variable to hold the found animal, if it exists

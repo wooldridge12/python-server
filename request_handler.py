@@ -102,22 +102,25 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         # Parse the URL
         # put a _ instead of the id so you dont get the orange line
-        (resource, _) = self.parse_url(self.path)
+        (resourceFromURL, _) = self.parse_url(self.path)
 
         # Initialize new animal
-        new_animal = None
-        new_customer = None
+        # new_animal = None
+        # new_customer = None
+        new_item = None
 
         # Add a new animal to the list. Don't worry about
         # the orange squiggle, you'll define the create_animal
         # function next.
-        if resource == "animals":
-            new_animal = create_animal(post_body)
+        if resourceFromURL == "animals":
+            new_item = create_animal(post_body)
+            # self.wfile.write(f"{new_animal}".encode())
 
-        elif resource == "customers":
-            new_customer = create_customer(post_body)
+        elif resourceFromURL == "customers":
+            new_item = create_customer(post_body)
         # Encode the new animal and send in response
-        self.wfile.write(f"{new_animal, new_customer}".encode())
+            # self.wfile.write(f"{new_customer}".encode())
+        self.wfile.write(f"{new_item}".encode())
 
     def do_DELETE(self):
         '''Delete method'''
