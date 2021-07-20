@@ -181,7 +181,7 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         # Parse the URL
         # put a _ instead of the id so you dont get the orange line
-        (resourceFromURL, _) = self.parse_url(self.path)
+        (resource_from_url, _) = self.parse_url(self.path)
 
         # Initialize new animal
         # new_animal = None
@@ -191,11 +191,11 @@ class HandleRequests(BaseHTTPRequestHandler):
         # Add a new animal to the list. Don't worry about
         # the orange squiggle, you'll define the create_animal
         # function next.
-        if resourceFromURL == "animals":
+        if resource_from_url == "animals":
             new_item = create_animal(post_body)
             # self.wfile.write(f"{new_animal}".encode())
 
-        elif resourceFromURL == "customers":
+        elif resource_from_url == "customers":
             new_item = create_customer(post_body)
         # Encode the new animal and send in response
             # self.wfile.write(f"{new_customer}".encode())
