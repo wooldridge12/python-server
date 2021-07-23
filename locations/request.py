@@ -58,21 +58,6 @@ def get_all_locations():
     return json.dumps(locations)
 
 
-#     # Function with a single parameter
-# def get_single_location(id):
-#     # Variable to hold the found animal, if it exists
-#     requested_location = None
-
-#     # Iterate the LOCATIONS list above. Very similar to the
-#     # for..of loops you used in JavaScript.
-#     for location in LOCATIONS:
-#         # Dictionaries in Python use [] notation to find a key
-#         # instead of the dot notation that JavaScript used.
-#         if location["id"] == id:
-#             requested_location = location
-
-#     return requested_location
-
 def get_single_location(id):
     with sqlite3.connect("./kennel.db") as conn:
         conn.row_factory = sqlite3.Row
@@ -107,7 +92,20 @@ def delete_location(id):
 
 
 def update_location(id, new_location):
-    for index, location in enumerate(LOCATIONS):
-        if location["id"] == id:
-            LOCATIONS[index] = new_location
-            break
+    with sqlite3.connect("./kennel.db") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        UPDATE Location
+            SET
+                name = ?,
+                address = ?
+        WHERE id = ?
+        """, (new_location['name'], new_location['address'], id, ))
+
+        rows_affected = db_cursor.rowcount
+
+    if rows_affected == 0:
+        return False
+    else:
+        return True
