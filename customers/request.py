@@ -25,7 +25,8 @@ def get_all_customers():
             c.id,
             c.name,
             c.address,
-            c.email
+            c.email,
+            c.password
         FROM customer c
         """)
 
@@ -34,26 +35,10 @@ def get_all_customers():
         dataset = db_cursor.fetchall()
 
         for row in dataset:
-            customer = Customer(row['id'], row['name'], row['address'], row['email'])
+            customer = Customer(row['id'], row['name'], row['address'], row['email'], row['password'])
             customers.append(customer.__dict__)
 
     return json.dumps(customers)
-
-#     # Function with a single parameter
-# def get_single_customer(id):
-#     '''get single customer'''
-#     # Variable to hold the found customer, if it exists
-#     requested_customer = None
-
-#     # Iterate the CUSTOMERS list above. Very similar to the
-#     # for..of loops you used in JavaScript.
-#     for customer in CUSTOMERS:
-#         # Dictionaries in Python use [] notation to find a key
-#         # instead of the dot notation that JavaScript used.
-#         if customer["id"] == id:
-#             requested_customer = customer
-
-#     return requested_customer
 
 def get_single_customer(id):
     with sqlite3.connect("./kennel.db") as conn:
@@ -65,14 +50,15 @@ def get_single_customer(id):
             c.id,
             c.name,
             c.address,
-            c.email
+            c.email,
+            c.password
         FROM customer c
         WHERE c.id = ?
         """, ( id, ))
 
         data = db_cursor.fetchone()
 
-        customer = Customer(data['id'], data['name'], data['address'], data['email'])
+        customer = Customer(data['id'], data['name'], data['address'], data['email'], data['password'])
 
         return json.dumps(customer.__dict__)
 
@@ -108,11 +94,25 @@ def delete_customer(id):
 
 
 def update_customer(id, new_customer):
-    '''Put method'''
-    for index, customer in enumerate(CUSTOMERS):
-        if customer["id"]  == id:
-            CUSTOMERS[index] = new_customer
-            break
+    with sqlite3.connect("./kennel.db") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        UPDATE Customer
+            SET 
+                name = ?,
+                address = ?,
+                email = ?,
+                password = ?
+        WHERE id = ?
+        """, (new_customer['name'], new_customer['address'], new_customer['email'], new_customer['password'], id, ))
+
+        rows_affected = db_cursor.rowcount
+
+    if rows_affected == 0:
+        return False
+    else:
+        return True
 
 
 def get_customers_by_email(email):
